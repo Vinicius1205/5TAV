@@ -1,0 +1,67 @@
+import random
+
+def mostrarTabuleiro(tab):
+    for i in range(0,9,3):
+        print(tab[i],tab[i+1],tab[i+2])
+
+
+def verificarVencedor(tab):
+
+    combinacoesVitoria=[
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+    ]
+    for combinacao in combinacoesVitoria:
+        a,b,c=combinacao
+        if tab[a]==tab[b]==tab[c] and tab[a]!="_":
+            return tab[a]
+    return None
+
+def verificarEmpate(tab):
+    return "_" not in tab
+
+
+vitorias1=0
+vitorias2=0
+empates=0
+
+for total in range(50000):
+    print(f"\nJogo {total + 1}")
+
+    tabuleiro=["_"]*9
+
+    for turno in range(9):
+        if turno%2==0:
+            jogadorAtual="X"
+        else:
+            jogadorAtual="O"
+        jogada=random.randint(1,9)
+        #print(f"\nJogador {jogadorAtual} escolheu a posicao {jogada}")
+        while tabuleiro[jogada-1]!="_":
+            jogada=random.randint(1,9)
+        tabuleiro[jogada-1]=jogadorAtual
+
+
+        #mostrarTabuleiro(tabuleiro)tabuleiro após cada jogada
+
+        vencedor=verificarVencedor(tabuleiro)
+        if vencedor:
+            print(f"\nO jogador {vencedor} venceu")
+            if vencedor=="X":
+                vitorias1+=1
+            else:
+                vitorias2+=1
+            break
+
+        if verificarEmpate(tabuleiro):
+            print("\nO jogo terminou em empate")
+            empates+=1
+            break
+    mostrarTabuleiro(tabuleiro)
+
+print(f"\nResultados após {total+1} jogos")
+print(f"Vitórias do primeiro jogadaor:{vitorias1}")
+print(f"Vitórias do segundo jogador:{vitorias2}")
+print(f"Empates:{empates}")
+
