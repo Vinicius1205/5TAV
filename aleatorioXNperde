@@ -1,0 +1,142 @@
+# nao consegui terminar o agente inteligente, ate tentei fazer mas nao estava funcional, fiz até o jogador que nao perde só.
+
+import random
+
+def mostrarTabuleiro(tab):
+    for i in range(0,9,3):
+        print(tab[i],tab[i+1],tab[i+2])
+
+def verificarVencedor(tab):
+    combinacoesVitoria=[
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+    ]
+
+    for combinacao in combinacoesVitoria:
+        a,b,c=combinacao
+        if tab[a]==tab[b]==tab[c] and tab[a]!="_":
+            return tab[a]
+    return None
+
+def verificarEmpate(tab):
+    return "_" not in tab
+
+def jogadaO(tab):
+    if tab[4]=="_":
+        return 4
+
+    for combinacao in[
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+    ]:
+        a,b,c=combinacao
+        if tab[a]==tab[b]=="O" and tab[c]=="_":
+            return c
+        if tab[a]==tab[c]=="O" and tab[b]=="_":
+            return b
+        if tab[b]==tab[c]=="O" and tab[a]=="_":
+            return a
+
+    for combinacao in[
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+    ]:
+        a,b,c=combinacao
+        if tab[a]==tab[b]=="X" and tab[c]=="_":
+            return c
+        if tab[a]==tab[c]=="X" and tab[b]=="_":
+            return b
+        if tab[b]==tab[c]=="X" and tab[a]=="_":
+            return a
+
+    for i in[0,2,6,8]:
+        if tab[i]=="_":
+            return i
+
+    for i in range(9):
+        if tab[i]=="_":
+            return i
+
+def simularJogos(numJogos):
+    vitorias1=0
+    vitorias2=0
+    empates=0
+
+    with open("resultadosJogos.txt","a") as arquivo:
+        for jogo in range(numJogos):
+            print(f"\nJogo {jogo+1}")
+            tabuleiro=["_"]*9
+            estadoJogo=[]
+
+            for turno in range(9):
+                jogadorAtual="X"
+                jogada=random.randint(1,9)
+
+                while tabuleiro[jogada-1]!="_":
+                    jogada=random.randint(1,9)
+
+                tabuleiro[jogada-1]=jogadorAtual
+                estadoJogo.append((jogadorAtual,jogada-1,tabuleiro.copy()))
+                print(f"Jogador {jogadorAtual} escolheu a posicao {jogada}")
+                mostrarTabuleiro(tabuleiro)
+                vencedor=verificarVencedor(tabuleiro)
+
+                if vencedor:
+                    print(f"O jogador {vencedor} venceu")
+                    if vencedor=="X":
+                        vitorias1+=1
+                        arquivo.write("-1\n")
+                    else:
+                        vitorias2+=1
+                        arquivo.write("1\n")
+                    break
+
+                if verificarEmpate(tabuleiro):
+                    print("O jogo terminou em empate")
+                    empates+=1
+                    arquivo.write("0\n")
+                    break
+
+                jogadorAtual="O"
+                jogada=jogadaO(tabuleiro)
+                tabuleiro[jogada]=jogadorAtual
+                estadoJogo.append((jogadorAtual,jogada,tabuleiro.copy()))
+                print(f"Jogador {jogadorAtual} escolheu a posicao {jogada+1}")
+                mostrarTabuleiro(tabuleiro)
+                vencedor=verificarVencedor(tabuleiro)
+
+                if vencedor:
+                    print(f"O jogador {vencedor} venceu")
+                    if vencedor=="X":
+                        vitorias1+=1
+                        arquivo.write("-1\n")
+                    else:
+                        vitorias2+=1
+                        arquivo.write("1\n")
+                    break
+
+                if verificarEmpate(tabuleiro):
+                    print("O jogo terminou em empate")
+                    empates+=1
+                    arquivo.write("0\n")
+                    break
+
+            for jogada in estadoJogo:
+                jogador,posicao,estado=jogada
+                arquivo.write(f"{estado}\n")
+
+    print(f"\nResultados apos {numJogos} jogos")
+    print(f"Vitorias de X:{vitorias1}")
+    print(f"Vitorias de O:{vitorias2}")
+    print(f"Empates:{empates}")
+    #with open("resultadosJogos.txt","a") as arquivo:
+        #arquivo.write(f"\nResultados apos {numJogos} jogos\n")
+        #arquivo.write(f"Vitorias de X:{vitorias1}\n")
+        #arquivo.write(f"Vitorias de O:{vitorias2}\n")
+        #arquivo.write(f"Empates:{empates}\n")
+
+quantidadeJogos=10000
+simularJogos(quantidadeJogos)
